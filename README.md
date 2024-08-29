@@ -56,7 +56,7 @@ docker cp section-1/db.sql dev-senior-en-unmanizales_db_1:./
 
 Entramos a la terminal del contenedor de la base de datos:
 ```bash
-docker-compose exec -it db bash
+docker-compose exec db bash
 ```
 
 Ejecutamos el archivo `db.sql` en la terminal del contenedor de la base de datos:
@@ -67,6 +67,31 @@ El comando anterior nos pedirá la contraseña del usuario de la base de datos q
 
 
 ### Sección 2
+Es el Frontend de la aplicación de lista de tareas (ToDo List). Se utilizó **Astro.js** y **Alpine.js** para la interfaz de usuario y **Tailwind CSS** para el diseño gráfico.
+
+#### Requisitos
+- Node.js
+- pnpm
+
+#### Instalación
+
+Entrar a la raíz del proyecto en Astro.js:
+```bash
+cd section-2
+```
+
+Instalar las dependencias:
+```bash
+pnpm install
+```
+
+#### Ejecución
+
+Levantar el servidor en modo desarrollo:
+```bash
+pnpm dev
+```
+
 
 
 ### Sección 3
@@ -98,7 +123,4 @@ pnpm run start:dev
 ```
 
 #### Documentación
-La documentación de la API se encuentra en la siguiente URL:
-```
-http://localhost:3000/api/docs
-```
+La documentación de la API se encuentra en la siguiente URL: http://localhost:3000/api/docs

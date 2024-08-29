@@ -1,5 +1,5 @@
 -- Create todo_app database
-CREATE DATABASE todo_app;
+-- CREATE DATABASE todo_app;
 
 -- Use todo_app database
 \c todo_app;

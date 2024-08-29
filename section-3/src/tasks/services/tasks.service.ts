@@ -39,6 +39,9 @@ export class TasksService {
     const columns = Object.keys(data);
     for (let i = 0; i < columns.length; i++) {
       baseQuery += ` ${columns[i]} = $${i + 1}`;
+      if (i !== columns.length - 1) {
+        baseQuery += ',';
+      }
     }
     baseQuery += ` WHERE id = $${columns.length + 1}`;
     const values: string | number[] = [];

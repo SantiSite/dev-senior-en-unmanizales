@@ -3,6 +3,9 @@ dist
 node_modules
 build
 
+# generated types
+.astro/
+
 # Logs
 logs
 *.log
@@ -41,6 +44,7 @@ coverage
 .env.test.local
 .env.production.local
 .env.local
+.env.production
 
 # temp directory
 .temp
