@@ -9,8 +9,7 @@ async function bootstrap() {
 
   app.enableCors({
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    origin: 'https://umanizales.frontend.com',
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'x-api-key'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'api_access_key'],
   });
 
   app.setGlobalPrefix('api');
