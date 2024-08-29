@@ -1,0 +1,187 @@
+---
+import Layout from '../layouts/Layout.astro';
+import NewTask from "../components/NewTask.astro";
+
+const responseWithCompletedTasks = await fetch("http://localhost:3000/api/tasks?is_completed=true", {
+	method: 'GET',
+	headers: {
+		'api_access_key': "f32fabc5ef56c1c44ef26aabf05fb8ea88770054da20f8ee9bfc5a1d866c6f592b41fc2767b978d2550c526186a640d0617626a48e69bd81795dc39b44bf6b16d0930800e1b0dd2f0e5a0a17773e288ddeaf4e9cc031d5891b8a30793b1da274953df4bd3c1a8c3f64ce8b214424cc9a0d7d6975cfafaf0699207bcea6d2176d",
+		'Accept': 'application/json',
+	},
+});
+const completedTasks = await responseWithCompletedTasks.json();
+
+const responseWithPendingTasks = await fetch("http://localhost:3000/api/tasks?is_completed=false", {
+	method: 'GET',
+	headers: {
+		'api_access_key': "f32fabc5ef56c1c44ef26aabf05fb8ea88770054da20f8ee9bfc5a1d866c6f592b41fc2767b978d2550c526186a640d0617626a48e69bd81795dc39b44bf6b16d0930800e1b0dd2f0e5a0a17773e288ddeaf4e9cc031d5891b8a30793b1da274953df4bd3c1a8c3f64ce8b214424cc9a0d7d6975cfafaf0699207bcea6d2176d",
+		'Accept': 'application/json',
+	},
+});
+const pendingTasks = await responseWithPendingTasks.json();
+
+async function completeTask(id: number) {
+	const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+		method: 'PATCH',
+		headers: {
+			'api_access_key': "f32fabc5ef56c1c44ef26aabf05fb8ea88770054da20f8ee9bfc5a1d866c6f592b41fc2767b978d2550c526186a640d0617626a48e69bd81795dc39b44bf6b16d0930800e1b0dd2f0e5a0a17773e288ddeaf4e9cc031d5891b8a30793b1da274953df4bd3c1a8c3f64ce8b214424cc9a0d7d6975cfafaf0699207bcea6d2176d",
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ is_completed: true }),
+	})
+	if (response.ok) {
+		alert('Task completed successfully');
+	} else {
+		alert('An error occurred while completing the task');
+	}
+}
+
+async function deleteTask(id: number) {
+	const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+		method: 'DELETE',
+		headers: {
+			'api_access_key': "f32fabc5ef56c1c44ef26aabf05fb8ea88770054da20f8ee9bfc5a1d866c6f592b41fc2767b978d2550c526186a640d0617626a48e69bd81795dc39b44bf6b16d0930800e1b0dd2f0e5a0a17773e288ddeaf4e9cc031d5891b8a30793b1da274953df4bd3c1a8c3f64ce8b214424cc9a0d7d6975cfafaf0699207bcea6d2176d",
+		},
+	})
+	if (response.ok) {
+		alert('Task deleted successfully');
+	} else {
+		alert('An error occurred while deleting the task');
+	}
+}
+
+async function incompleteTask(id: number) {
+	const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+		method: 'PATCH',
+		headers: {
+			'api_access_key': "f32fabc5ef56c1c44ef26aabf05fb8ea88770054da20f8ee9bfc5a1d866c6f592b41fc2767b978d2550c526186a640d0617626a48e69bd81795dc39b44bf6b16d0930800e1b0dd2f0e5a0a17773e288ddeaf4e9cc031d5891b8a30793b1da274953df4bd3c1a8c3f64ce8b214424cc9a0d7d6975cfafaf0699207bcea6d2176d",
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ is_completed: false }),
+	})
+	if (response.ok) {
+		alert('Task unfinished successfully');
+	} else {
+		alert('An error occurred while unfinished the task');
+	}
+}
+
+async function updateTask(id: number, title: string, description: string) {
+	const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+		method: 'PATCH',
+		headers: {
+			'api_access_key': "f32fabc5ef56c1c44ef26aabf05fb8ea88770054da20f8ee9bfc5a1d866c6f592b41fc2767b978d2550c526186a640d0617626a48e69bd81795dc39b44bf6b16d0930800e1b0dd2f0e5a0a17773e288ddeaf4e9cc031d5891b8a30793b1da274953df4bd3c1a8c3f64ce8b214424cc9a0d7d6975cfafaf0699207bcea6d2176d",
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({title, description}),
+	})
+	if (response.ok) {
+		alert('Task updated successfully');
+	} else {
+		alert('An error occurred while updating the task');
+	}
+}
+---
+
+<Layout title="TODO APP">
+	<div x-data=`{open: false, selectedTaskToEdit: {}}` class="space-y-8">
+		<NewTask />
+
+		<div x-data=`{deleteTask: ${deleteTask}}` class="grid grid-cols-1 gap-4 mx-4 pb-10 lg:grid-cols-2">
+			<div x-data=`{pendingTasks: ${JSON.stringify(pendingTasks)}, completeTask: ${completeTask}}` class="bg-white shadow-md rounded-lg p-6 min-h-min max-h-96 overflow-y-auto">
+				<h2 class="text-xl font-semibold mb-4">Pending Tasks</h2>
+				<ul class="space-y-4">
+					<template x-if="pendingTasks.length === 0">
+						<p class="text-gray-600">No pending tasks</p>
+					</template>
+					<template x-for={"task in pendingTasks"} :key="task.id">
+						<li
+							class="border-b pb-4 transition-all duration-300 ease-in-out"
+							x-transition:enter="opacity-0 transform scale-95"
+							x-transition:enter-end="opacity-100 transform scale-100"
+							x-transition:leave="opacity-100 transform scale-100"
+							x-transition:leave-end="opacity-0 transform scale-95"
+						>
+							<div class="flex flex-col justify-between sm:flex-row">
+								<div>
+									<h3 x-text="task.title" class="font-medium"></h3>
+									<p x-text="task.description" class="text-gray-600"></p>
+								</div>
+								<div class="space-x-4 flex justify-center items-center">
+									<button x-on-:click="open = true; selectedTaskToEdit = JSON.parse(JSON.stringify(task))" class="text-blue-500 hover:text-blue-700">Edit</button>
+									<button @click="completeTask(task.id)" class="text-green-500 hover:text-green-700">Complete</button>
+									<button @click="deleteTask(task.id)" class="text-red-500 hover:text-red-700">Delete</button>
+								</div>
+							</div>
+						</li>
+					</template>
+				</ul>
+			</div>
+
+			<div x-data=`{completedTasks: ${JSON.stringify(completedTasks)}, incompleteTask: ${incompleteTask}}` class="bg-white shadow-md rounded-lg p-6 min-h-min max-h-96 overflow-y-auto">
+				<h2 class="text-xl font-semibold mb-4">Completed Tasks</h2>
+				<ul class="space-y-4">
+					<template x-if="completedTasks.length === 0">
+						<p class="text-gray-600">No completed tasks</p>
+					</template>
+					<template x-for="task in completedTasks" :key="task.id">
+						<li
+							class="border-b pb-4 transition-all duration-300 ease-in-out"
+							x-transition:enter="opacity-0 transform scale-95"
+							x-transition:enter-end="opacity-100 transform scale-100"
+							x-transition:leave="opacity-100 transform scale-100"
+							x-transition:leave-end="opacity-0 transform scale-95"
+						>
+							<div class="flex flex-col justify-between sm:flex-row">
+								<div>
+									<h3 x-text="task.title" class="font-medium line-through"></h3>
+									<p x-text="task.description" class="text-gray-600"></p>
+								</div>
+								<div class="space-x-4 flex justify-center items-center">
+									<button @click="incompleteTask(task.id)" class="text-yellow-500 hover:text-yellow-700">Undo</button>
+									<button @click="deleteTask(task.id)" class="text-red-500 hover:text-red-700">Delete</button>
+								</div>
+							</div>
+						</li>
+					</template>
+				</ul>
+			</div>
+		</div>
+
+		<div x-show="open" x-data=`{updateTask: ${updateTask}}` class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+			<div class="bg-white p-6 rounded-lg w-full max-w-md">
+				<h2 class="text-xl font-semibold mb-4">Edit Task</h2>
+				<form @submit.prevent="() => updateTask(selectedTaskToEdit.id, selectedTaskToEdit.title, selectedTaskToEdit.description)" class="space-y-4">
+					<input
+						type="text"
+						x-model="selectedTaskToEdit.title"
+						placeholder="Task Title"
+						class="w-full p-2 border rounded"
+						required
+					>
+					<textarea
+						x-model="selectedTaskToEdit.description"
+						placeholder="Task Description"
+						class="w-full p-2 border rounded"
+						rows="3"
+					></textarea>
+					<div class="flex justify-end space-x-2">
+						<button
+							type="button"
+							@click="open = false"
+							class="bg-gray-300 text-gray-800 p-2 rounded hover:bg-gray-400 transition duration-300"
+						>
+							Cancel
+						</button>
+						<button
+							type="submit"
+							class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300"
+						>
+							Update Task
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</Layout>

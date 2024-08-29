@@ -1,0 +1,42 @@
+---
+async function addTask(title: string, description: string) {
+  const response = await fetch("http://localhost:3000/api/tasks", {
+    method: 'POST',
+    headers: {
+      'api_access_key': "f32fabc5ef56c1c44ef26aabf05fb8ea88770054da20f8ee9bfc5a1d866c6f592b41fc2767b978d2550c526186a640d0617626a48e69bd81795dc39b44bf6b16d0930800e1b0dd2f0e5a0a17773e288ddeaf4e9cc031d5891b8a30793b1da274953df4bd3c1a8c3f64ce8b214424cc9a0d7d6975cfafaf0699207bcea6d2176d",
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ title, description }),
+  });
+  if (response.ok) {
+    alert('Task added successfully');
+  } else {
+    alert('An error occurred while adding the task');
+  }
+}
+---
+
+<div class="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto">
+  <h2 class="text-xl font-semibold mb-4">Add New Task</h2>
+  <form x-data=`{title: '', description: '', addTask: ${addTask}}` @submit.prevent="() => addTask(title, description)" class="space-y-4">
+    <input
+      type="text"
+      x-model="title"
+      placeholder="Task Title"
+      class="w-full p-2 border rounded"
+      required
+    >
+    <textarea
+      x-model="description"
+      placeholder="Task Description"
+      class="w-full p-2 border rounded"
+      rows="3"
+    ></textarea>
+    <button
+      type="submit"
+      class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300"
+    >
+      Add Task
+    </button>
+  </form>
+</div>
